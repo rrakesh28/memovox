@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -7,8 +7,23 @@ import Tile from "@/components/Tile";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profile = () => {
+  const [name, setName] = useState<String>("");
+
+  useEffect(() => {
+    getName();
+  }, []);
+
+  const getName = async () => {
+    try {
+      const nameItem = await AsyncStorage.getItem("userName");
+      setName(nameItem ?? "Guest");
+    } catch (error) {
+      console.error("Error saving name:", error);
+    }
+  };
   return (
     <View>
       <SafeAreaView className="px-4">
@@ -36,7 +51,7 @@ const Profile = () => {
               className="h-16 w-16 rounded-full border-black border-2"
             />
             <View>
-              <Text className="font-semibold text-lg">Rakesh Rebbavarapu</Text>
+              <Text className="font-semibold text-lg">{name}</Text>
               <Text>Take a deep breath, and let your words flow.</Text>
             </View>
           </View>
@@ -54,7 +69,9 @@ const Profile = () => {
             <Tile
               icon={<Ionicons name="flash-outline" size={24} color="black" />}
               title="Journal Stats"
-              onPress={() => {}}
+              onPress={() => {
+                router.push("/notes/stats");
+              }}
             />
             <Tile
               icon={<Feather name="calendar" size={24} color="black" />}

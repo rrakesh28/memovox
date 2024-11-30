@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "memovox",
-    "slug": "memovox",
+    "name": "test_app_1",
+    "slug": "test_app_1",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -11,13 +11,11 @@
     "ios": {
       "supportsTablet": true
     },
-    "backgroundColor": "#D8D4C8",
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#D8D4C8"
-      },
-      "backgroundColor": "#D8D4C8"
+        "backgroundColor": "#ffffff"
+      }
     },
     "web": {
       "bundler": "metro",
@@ -32,10 +30,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#D8D4C8"
+          "backgroundColor": "#ffffff"
         }
       ],
-      "expo-font",
       "expo-sqlite"
     ],
     "experiments": {

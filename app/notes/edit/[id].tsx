@@ -5,41 +5,38 @@ import {
   TextInputChangeEventData,
   View,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { debounce } from "lodash";
 import { createNote, updateNote } from "@/database";
+import { useLocalSearchParams } from "expo-router";
+import { Note } from "@/types/Note";
+import { getNotesById } from "@/database/notesDb";
+import { getDayOfWeek } from "@/utils/getDayOfWeek";
+import { months } from "@/utils/monthUtils";
+import { getWeekNumberOfMonth } from "@/utils/getWeekNumberOfMonth";
 
-const Create = () => {
-  const [noteId, setNoteId] = useState<number | null>(null);
+const Edit = () => {
+  const { id } = useLocalSearchParams<{ id: string }>();
 
-  const date = new Date();
+  const inputRef = useRef<TextInput>(null);
 
-  const dayOfWeek = date.toLocaleString("en-US", { weekday: "long" });
-
-  const day = date.getDate();
-
-  const month = date.toLocaleString("en-US", { month: "long" });
-
-  const startDate = new Date(date.getFullYear(), 0, 1);
-  const daysInYear = Math.floor(
-    (date.getTime() - startDate.getTime()) / (24 * 60 * 60 * 1000),
-  );
-  const weekNumber = Math.ceil((daysInYear + 1) / 7);
+  const [notes, setNotes] = useState<Note | null>(null);
 
   useEffect(() => {
-    const newNote = async () => {
-      try {
-        const newNoteId = await createNote();;
-        setNoteId(newNoteId);
-        console.log("New note ID:", newNoteId);
-      } catch (e) {
-        console.error("Error creating note:", e);
-      }
+    const fetchNotes = async () => {
+      const note = await getNotesById(parseInt(id));
+      setNotes(note);
     };
-    newNote();
-  }, []);
+    fetchNotes();
+  }, [id]);
+
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.setNativeProps({ text: notes });
+    }
+  }, [notes]);
 
   const onInputChange = debounce(async (text: string, noteId: number) => {
     if (!noteId) return;
@@ -48,11 +45,11 @@ const Create = () => {
   }, 500);
 
   function handleTextInputChange(
-    e: NativeSyntheticEvent<TextInputChangeEventData>,
+    e: NativeSyntheticEvent<TextInputChangeEventData>
   ) {
-    if (!noteId) return;
+    if (!id) return;
     const text = e.nativeEvent.text;
-    onInputChange(text, noteId);
+    onInputChange(text, parseInt(id));
   }
 
   return (
@@ -60,36 +57,42 @@ const Create = () => {
       <SafeAreaView className="px-4 h-full w-full">
         <View className="flex flex-row justify-between items-start mt-5">
           <View className="flex flex-col justify-center items-center">
+            {notes && (
+              <Text
+                className="text-3xl"
+                style={{ fontFamily: "ShipporiMincho_400Regular" }}
+              >
+                {getDayOfWeek(notes?.date, notes?.month, notes?.year)}
+              </Text>
+            )}
             <Text
               className="text-3xl"
               style={{ fontFamily: "ShipporiMincho_400Regular" }}
             >
-              {dayOfWeek}
+              {notes?.date}
             </Text>
             <Text
               className="text-3xl"
               style={{ fontFamily: "ShipporiMincho_400Regular" }}
             >
-              {day}
-            </Text>
-            <Text
-              className="text-3xl"
-              style={{ fontFamily: "ShipporiMincho_400Regular" }}
-            >
-              {month}
+              {months[notes?.month ?? 0]}
             </Text>
           </View>
-          <Text
-            className="font-semibold"
-            style={{ fontFamily: "ShipporiMincho_400Regular" }}
-          >
-            WEEK {weekNumber}
-          </Text>
+          {notes && (
+            <Text
+              className="font-semibold"
+              style={{ fontFamily: "ShipporiMincho_400Regular" }}
+            >
+              WEEK{" "}
+              {getWeekNumberOfMonth(notes!.date, notes!.month, notes!.year)}
+            </Text>
+          )}
         </View>
         <View className="mt-24 mb-4 pb-[100px]">
           <TextInput
             className="h-full text-xl text-gray-700 p-3 "
             placeholder="Enter your notes here..."
+            ref={inputRef}
             style={{
               textAlignVertical: "top",
               fontFamily: "Handlee_400Regular",
@@ -104,4 +107,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Edit;

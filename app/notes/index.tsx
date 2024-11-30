@@ -5,21 +5,21 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import Fontisto from "@expo/vector-icons/Fontisto";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { router } from "expo-router";
-import * as SQLite from "expo-sqlite";
 import NoteCard from "@/components/NotesCard";
+import { Note } from "@/types/Note";
+import { fetchAllNotes } from "@/database";
+import { StatusBar } from "expo-status-bar";
 
-const home = () => {
-  const [notes, setNotes] = useState<any[]>([]);
+const Home = () => {
+  const [notes, setNotes] = useState<Note[]>([]);
 
   useEffect(() => {
     fetchNotes();
   }, []);
 
   const fetchNotes = async () => {
-    const db = await SQLite.openDatabaseAsync("databaseName.db");
-
-    const result = await db.getAllAsync("SELECT * FROM notes ORDER BY id DESC");
-    setNotes(result);
+    const notes: Note[] = await fetchAllNotes();
+    setNotes(notes);
   };
   return (
     <View className="h-full w-full">
@@ -61,4 +61,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default Home;

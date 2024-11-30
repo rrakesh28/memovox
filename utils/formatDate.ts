@@ -1,6 +1,6 @@
 export const formatDate = (
   isoString: string,
-  type: "short" | "long" = "short"
+  type: "short" | "long" = "short",
 ) => {
   const date = new Date(isoString);
   return new Intl.DateTimeFormat("en-US", {

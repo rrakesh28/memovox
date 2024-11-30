@@ -1,50 +1,36 @@
 import { formatDate } from "@/utils/formatDate";
-import React, { useState } from "react";
+import { months, shortMonths } from "@/utils/monthUtils";
+import React from "react";
 import { View, Text, TouchableOpacity, FlatList } from "react-native";
 
 interface CalendarProps {
+  currentYear: number;
+  setCurrentYear: React.Dispatch<React.SetStateAction<number>>;
+  currentMonth: number;
+  setCurrentMonth: React.Dispatch<React.SetStateAction<number>>;
+  currentDay: number;
+  setCurrentDay: React.Dispatch<React.SetStateAction<number>>;
+  isYearSelection: boolean;
+  setIsYearSelection: React.Dispatch<React.SetStateAction<boolean>>;
+  isMonthSelection: boolean;
+  setIsMonthSelection: React.Dispatch<React.SetStateAction<boolean>>;
   onDayPress?: (date: { year: number; month: number; day: number }) => void;
 }
 
-const CalendarComponent: React.FC<CalendarProps> = ({ onDayPress }) => {
-  const [currentYear, setCurrentYear] = useState<number>(
-    new Date().getFullYear()
-  );
-  const [currentMonth, setCurrentMonth] = useState<number>(
-    new Date().getMonth() + 1
-  );
-  const [isYearSelection, setIsYearSelection] = useState<boolean>(false);
-  const [isMonthSelection, setIsMonthSelection] = useState<boolean>(false);
+const CalendarComponent: React.FC<CalendarProps> = ({
+  currentYear,
+  setCurrentYear,
+  currentMonth,
+  setCurrentMonth,
+  currentDay,
+  setCurrentDay,
+  isYearSelection,
+  setIsYearSelection,
+  isMonthSelection,
+  setIsMonthSelection,
+  onDayPress,
+}) => {
 
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  const shortMonths = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
 
   const shortName = (monthName: string): string => {
     const monthIndex = months.indexOf(monthName);
@@ -71,10 +57,11 @@ const CalendarComponent: React.FC<CalendarProps> = ({ onDayPress }) => {
   const handleYearPress = (year: number): void => {
     setCurrentYear(year);
     setIsYearSelection(false);
+    setIsMonthSelection(true);
   };
 
   const handleMonthPress = (index: number): void => {
-    setCurrentMonth(index + 1); // Months are 1-indexed
+    setCurrentMonth(index + 1);
     setIsMonthSelection(false);
   };
 
@@ -98,13 +85,18 @@ const CalendarComponent: React.FC<CalendarProps> = ({ onDayPress }) => {
         data={calendarDays}
         keyExtractor={(item, index) => index.toString()}
         numColumns={7}
+        scrollEnabled={false}
         renderItem={({ item }) =>
           item ? (
             <TouchableOpacity
-              className="w-1/7 h-16  items-center justify-center"
+              className={`${item === currentDay ? "bg-accent-highlight rounded-full text-white" : ""} w-1/7 aspect-[1]  items-center justify-center`}
               onPress={() => handleDayPress(item)}
             >
-              <Text className="text-gray-800 font-bold">{item}</Text>
+              <Text
+                className={`${item === currentDay ? " text-white" : ""}  text-gray-800 font-bold `}
+              >
+                {item}
+              </Text>
             </TouchableOpacity>
           ) : (
             <View className="w-1/7 h-16 " />
@@ -113,7 +105,6 @@ const CalendarComponent: React.FC<CalendarProps> = ({ onDayPress }) => {
       />
     );
   };
-  console.log(currentMonth);
 
   return (
     <View className="flex-1">
@@ -174,18 +165,27 @@ const CalendarComponent: React.FC<CalendarProps> = ({ onDayPress }) => {
 
       {isYearSelection && (
         <FlatList
-          data={Array.from({ length: 30 }, (_, i) => currentYear - 15 + i)}
+          data={Array.from({ length: 16 }, (_, i) => currentYear - 8 + i)}
           keyExtractor={(item) => item.toString()}
           numColumns={4}
-          contentContainerStyle={{ padding: 16 }}
           renderItem={({ item }) => (
             <TouchableOpacity
-              className="w-1/4 p-3 m-1 bg-blue-100 rounded-lg items-center"
+              className="w-1/4 h-24 items-center"
               onPress={() => handleYearPress(item)}
             >
-              <Text className="text-blue-800 font-bold text-base">{item}</Text>
+              <View
+                className={`${item === currentYear ? "bg-accent-highlight" : ""} h-full aspect-[1] rounded-full justify-center items-center`}
+              >
+                <Text
+                  className={`${item === currentYear ? "text-white" : ""} font-bold text-center`}
+                >
+                  {item}
+                </Text>
+              </View>
             </TouchableOpacity>
           )}
+          scrollEnabled={false}
+          className="max-h-[335px]"
         />
       )}
 
@@ -195,20 +195,19 @@ const CalendarComponent: React.FC<CalendarProps> = ({ onDayPress }) => {
             data={months}
             keyExtractor={(item, index) => index.toString()}
             numColumns={4}
+            scrollEnabled={false}
             renderItem={({ item, index }) => (
               <TouchableOpacity
                 className="w-1/4 h-16 mb-5 items-center justify-center "
                 onPress={() => handleMonthPress(index)}
               >
                 <View
-                  className={`${
-                    currentMonth === index + 1 ? "bg-accent-highlight" : ""
-                  } h-16 w-16 items-center justify-center rounded-full`}
+                  className={`${currentMonth === index + 1 ? "bg-accent-highlight" : ""
+                    } h-16 w-16 items-center justify-center rounded-full`}
                 >
                   <Text
-                    className={`${
-                      currentMonth == index + 1 ? "text-white" : ""
-                    } text-base text-center`}
+                    className={`${currentMonth === index + 1 ? "text-white" : ""
+                      } text-base text-center`}
                   >
                     {shortName(item)}
                   </Text>
