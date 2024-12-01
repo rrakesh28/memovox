@@ -4,7 +4,9 @@
 
 ### The **MemoVox** is a simple, intuitive application designed to help users organize and manage their notes effectively. The app allows users to create, read, update, and delete notes. It includes features like viewing statistics, tracking journaling streaks, and using a calendar to filter notes.
 
-![Thumbnail](./thumbnail.png)
+[![Thumbnail](./thumbnail.png)](https://dribbble.com/shots/22303943-Journal-app)
+[Link to the Design](https://dribbble.com/shots/22303943-Journal-app)
+
 Deveoped By: [Rebbavarapu Rakesh](https://x.com/theamigoooooo) And Designed By: [Kiruthiga Kanagalingam](https://www.linkedin.com/in/kiruanime2003/)
 
 ## Features
