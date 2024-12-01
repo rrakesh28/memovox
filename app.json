@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "test_app_1",
-    "slug": "test_app_1",
+    "name": "memovox",
+    "slug": "memovox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
