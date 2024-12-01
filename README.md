@@ -116,3 +116,8 @@ This project is licensed under the MIT License. See the LICENSE file for details
 
 Have questions, suggestions, or just want to chat about the project? Reach out at your rebbavarapurakesh@gmail.com or submit an issue on GitHub.
 Happy coding! 🚀
+
+### License
+
+    Copyright (c) 2024, Rebbavarapu Rakesh
+    All rights reserved.
