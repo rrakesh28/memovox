@@ -130,14 +130,21 @@ export const getNotesCount = async (): Promise<number> => {
 export const getDatesByMonth = async (month: number): Promise<number[]> => {
   const db = await SQLite.openDatabaseAsync("databaseName.db");
 
-  const result = await db.getFirstAsync<number[]>(
-    "SELECT date FROM notes WHERE month=?",
-    [month]
-  );
+  const result = await db.getAllAsync("SELECT date FROM notes WHERE month=?", [
+    month,
+  ]);
 
   if (result === null) {
     return [];
   }
 
-  return result;
+  const dates = result.map((row: any) => row.date);
+
+  return dates;
+};
+
+export const clearData = async () => {
+  const db = await SQLite.openDatabaseAsync("databaseName.db");
+
+  await db.getFirstAsync("DELETE FROM notes");
 };

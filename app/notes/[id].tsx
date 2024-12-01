@@ -32,21 +32,6 @@ const ViewNotes = () => {
     };
     fetchNotes();
   }, [id]);
-
-  const onInputChange = debounce(async (text: string, noteId: number) => {
-    if (!noteId) return;
-
-    await updateNote(text, noteId);
-  }, 500);
-
-  function handleTextInputChange(
-    e: NativeSyntheticEvent<TextInputChangeEventData>
-  ) {
-    if (!id) return;
-    const text = e.nativeEvent.text;
-    onInputChange(text, parseInt(id));
-  }
-
   return (
     <View className="h-full w-full">
       <SafeAreaView className="px-4 h-full w-full">

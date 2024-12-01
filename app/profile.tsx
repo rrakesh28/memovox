@@ -1,6 +1,6 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Image, Linking, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Tile from "@/components/Tile";
@@ -8,6 +8,9 @@ import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Share } from "react-native";
+import { Alert } from "react-native";
+import { clearData } from "@/database/notesDb";
 
 const Profile = () => {
   const [name, setName] = useState<String>("");
@@ -24,6 +27,30 @@ const Profile = () => {
       console.error("Error saving name:", error);
     }
   };
+
+  const referFriends = async (): Promise<void> => {
+    try {
+      const result = await Share.share({
+        message: `🌟 Check out this awesome note-taking app! 📝\n\n
+        "Memovox" is designed to help you organize your thoughts and ideas quickly and easily. Whether you're taking quick notes, saving important information, or just organizing your life, Memovox has you covered! 📱\n\n
+        Try it out now: https://github.com/rrakesh28/memovox\n\n
+        Download it today and improve your productivity! 🔥`,
+      });
+
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          console.log(`Shared with activity type: ${result.activityType}`);
+        } else {
+          console.log("Shared successfully!");
+        }
+      } else if (result.action === Share.dismissedAction) {
+        console.log("Share dismissed");
+      }
+    } catch (error: any) {
+      Alert.alert("Error", `An error occurred while sharing: ${error.message}`);
+    }
+  };
+
   return (
     <View>
       <SafeAreaView className="px-4">
@@ -58,12 +85,12 @@ const Profile = () => {
           <View className="mt-10 px-6 flex flex-col gap-6 space-y-6">
             <Tile
               icon={<Feather name="user" size={24} color="black" />}
-              title="Account Settings"
+              title="Account Settings*"
               onPress={() => {}}
             />
             <Tile
               icon={<Feather name="upload-cloud" size={24} color="black" />}
-              title="Backup and Restore"
+              title="Backup and Restore*"
               onPress={() => {}}
             />
             <Tile
@@ -83,36 +110,46 @@ const Profile = () => {
             <Tile
               icon={<Feather name="users" size={24} color="black" />}
               title="Refer Friends"
-              onPress={() => {}}
+              onPress={referFriends}
             />
             <Tile
               icon={<Feather name="briefcase" size={24} color="black" />}
-              title="Data Storage"
+              title="Data Storage*"
               onPress={() => {}}
             />
             <Tile
               icon={<Feather name="trash" size={24} color="black" />}
               title="Clear Data"
-              onPress={() => {}}
+              onPress={async () => {
+                await clearData();
+              }}
             />
             <Tile
               icon={<Feather name="key" size={24} color="black" />}
-              title="Privacy Policy"
+              title="Privacy Policy*"
               onPress={() => {}}
             />
             <Tile
               icon={<Feather name="coffee" size={24} color="black" />}
               title="Support Me"
-              onPress={() => {}}
+              onPress={() => {
+                Linking.openURL(
+                  "https://buymeacoffee.com/rebbavarapurakesh"
+                ).catch((err) => console.error("Failed to open URL", err));
+              }}
             />
             <Tile
               icon={<Feather name="github" size={24} color="black" />}
               title="GitHub"
-              onPress={() => {}}
+              onPress={() => {
+                Linking.openURL("https://www.github.com/rrakesh28").catch(
+                  (err) => console.error("Failed to open URL", err)
+                );
+              }}
             />
             <Tile
               icon={<MaterialIcons name="history" size={24} color="black" />}
-              title="ChangeLog"
+              title="ChangeLog*"
               onPress={() => {}}
             />
             <Tile
