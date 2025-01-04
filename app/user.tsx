@@ -7,8 +7,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
+import * as SecureStore from 'expo-secure-store';
+
 
 const User = () => {
   const [name, setName] = useState<string>("");
@@ -18,13 +19,13 @@ const User = () => {
     setName(input);
   };
 
-  const submit = async () => {
+  const submit = () => {
     if (!name.trim()) {
       setErrorMessage("Enter a valid name");
       return;
     }
     try {
-      await AsyncStorage.setItem("userName", name);
+      SecureStore.setItem("userName", name);
       setErrorMessage("");
       router.replace("/notes");
     } catch (error) {

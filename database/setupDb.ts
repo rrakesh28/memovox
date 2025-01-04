@@ -1,11 +1,25 @@
-import * as SQLite from 'expo-sqlite';
+import * as SQLite from "expo-sqlite";
 
-export const setupDatabase = async () => {
-  try {
-    const db = await SQLite.openDatabaseAsync("databaseName.db");
+export async function migrateDbIfNeeded(db: SQLite.SQLiteDatabase) {
+  const DATABASE_VERSION = 1;
+  let result = await db.getFirstAsync<{ user_version: number }>(
+    "PRAGMA user_version"
+  );
 
-    await db.execAsync(`
-      CREATE TABLE IF NOT EXISTS notes (
+  let currentDbVersion = result?.user_version ?? 0;
+
+  if (currentDbVersion >= DATABASE_VERSION) {
+    return;
+  }
+  if (currentDbVersion === 0) {
+    const result = await db.execAsync(`
+PRAGMA journal_mode = 'wal';
+CREATE TABLE chats (
+  id INTEGER PRIMARY KEY NOT NULL, 
+  title TEXT NOT NULL
+);
+
+ CREATE TABLE IF NOT EXISTS notes (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         notes TEXT,
         date INTEGER,
@@ -13,10 +27,10 @@ export const setupDatabase = async () => {
         year INTEGER,
         created_at STRING
       );
-    `);
+`);
 
-    console.log("Database setup completed!");
-  } catch (e) {
-    console.error("Error setting up database:", e);
+    currentDbVersion = 1;
   }
-};
+
+  await db.execAsync(`PRAGMA user_version = ${DATABASE_VERSION}`);
+}

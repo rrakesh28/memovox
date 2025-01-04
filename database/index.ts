@@ -1,4 +1,4 @@
-import { setupDatabase } from './setupDb';
+import { migrateDbIfNeeded } from './setupDb';
 import { createNote, fetchAllNotes, updateNote } from './notesDb';
 
-export { setupDatabase, createNote, fetchAllNotes, updateNote };
+export { migrateDbIfNeeded, createNote, fetchAllNotes, updateNote };

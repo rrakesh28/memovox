@@ -9,8 +9,9 @@ import "../global.css";
 import { ShipporiMincho_400Regular } from "@expo-google-fonts/shippori-mincho";
 import { Handlee_400Regular } from "@expo-google-fonts/handlee";
 import { setStatusBarStyle, StatusBar } from "expo-status-bar";
-import { setupDatabase } from "@/database";
 import * as SystemUI from "expo-system-ui";
+import { SQLiteProvider } from "expo-sqlite";
+import { migrateDbIfNeeded } from "@/database";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,19 +34,12 @@ export default function RootLayout() {
     }, 0);
   }, []);
 
-  useEffect(() => {
-    const initializeApp = async () => {
-      await setupDatabase();
-    };
-    initializeApp();
-  }, []);
-
   if (!loaded) {
     return null;
   }
 
   return (
-    <>
+    <SQLiteProvider databaseName="chat.db" onInit={migrateDbIfNeeded}>
       <StatusBar translucent={true} />
       <Stack
         initialRouteName="notes"
@@ -64,6 +58,6 @@ export default function RootLayout() {
         <Stack.Screen name="profile" />
         <Stack.Screen name="+not-found" />
       </Stack>
-    </>
+    </SQLiteProvider>
   );
 }

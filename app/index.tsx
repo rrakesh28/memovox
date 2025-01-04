@@ -1,7 +1,7 @@
 import { Image, StyleSheet, View } from "react-native";
 import React, { useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
+import * as SecureStore from 'expo-secure-store';
 
 const Index = () => {
   const router = useRouter();
@@ -9,19 +9,23 @@ const Index = () => {
   useEffect(() => {
     const navigateUser = async () => {
       try {
-        const introCompleted = await AsyncStorage.getItem("intro_completed");
-        const userName = await AsyncStorage.getItem("userName");
+        // Wait for the results of SecureStore.getItem
+        const introCompleted = await SecureStore.getItemAsync("intro_completed");
+        const userName = await SecureStore.getItemAsync("userName");
 
         if (introCompleted !== "true") {
+          // If intro is not completed, navigate to welcome
           router.replace("/welcome");
           return;
         }
 
         if (!userName) {
+          // If userName is not set, navigate to user setup page
           router.replace("/user");
           return;
         }
 
+        // If both conditions are met, navigate to notes page
         router.replace("/notes");
       } catch (e) {
         console.error("Error during navigation:", e);
@@ -32,6 +36,7 @@ const Index = () => {
   }, [router]);
 
   return (
+
     <View
       style={{
         display: "flex",

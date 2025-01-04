@@ -1,10 +1,8 @@
 import { Note } from "@/types/Note";
-import * as SQLite from "expo-sqlite";
+import { SQLiteDatabase } from "expo-sqlite";
 
-export const fetchAllNotes = async (): Promise<Note[]> => {
+export const fetchAllNotes = async (db: SQLiteDatabase): Promise<Note[]> => {
   try {
-    const db = await SQLite.openDatabaseAsync("databaseName.db");
-
     const result: Note[] = await db.getAllAsync(
       "SELECT * FROM notes ORDER BY id DESC"
     );
@@ -17,12 +15,12 @@ export const fetchAllNotes = async (): Promise<Note[]> => {
 };
 
 export const fetchNotesByDate = async (
+  db: SQLiteDatabase,
   currentDay: number,
   currentMonth: number,
   currentYear: number
 ): Promise<Note[]> => {
   try {
-    const db = await SQLite.openDatabaseAsync("databaseName.db");
 
     const result: Note[] = await db.getAllAsync(
       "SELECT * FROM notes WHERE date = ? AND month = ? AND year = ?",
@@ -36,10 +34,8 @@ export const fetchNotesByDate = async (
   }
 };
 
-export const createNote = async (): Promise<number | null> => {
+export const createNote = async (db: SQLiteDatabase): Promise<Note | null> => {
   try {
-    const db = await SQLite.openDatabaseAsync("databaseName.db");
-
     const date = new Date();
     const day = date.getDate();
     const month = date.getMonth();
@@ -51,16 +47,25 @@ export const createNote = async (): Promise<number | null> => {
       ["New Note", day, month, year, timestamp]
     );
 
-    return result.lastInsertRowId;
+    const newNote: Note = {
+      id: result.lastInsertRowId,
+      notes: "New Note",
+      date: day,
+      month: month,
+      year: year,
+      created_at: timestamp,
+    };
+
+    return newNote;
   } catch (e) {
     console.error("Error creating note:", e);
     return null;
   }
 };
 
-export const updateNote = async (text: string, noteId: number) => {
+
+export const updateNote = async (db: SQLiteDatabase, text: string, noteId: number) => {
   try {
-    const db = await SQLite.openDatabaseAsync("databaseName.db");
 
     await db.runAsync("UPDATE notes SET notes = ? WHERE id = ?", [
       text,
@@ -71,8 +76,7 @@ export const updateNote = async (text: string, noteId: number) => {
   }
 };
 
-export const getNotesById = async (id: number): Promise<Note | null> => {
-  const db = await SQLite.openDatabaseAsync("databaseName.db");
+export const getNotesById = async (db: SQLiteDatabase, id: number): Promise<Note | null> => {
 
   const result = await db.getFirstAsync<Note>(
     `SELECT * FROM notes WHERE id = ?`,
@@ -82,12 +86,12 @@ export const getNotesById = async (id: number): Promise<Note | null> => {
 };
 
 export const getNotesInDateRange = async (
+  db: SQLiteDatabase,
   startDate: Date,
   endDate: Date,
   month: number,
   year: number
 ) => {
-  const db = await SQLite.openDatabaseAsync("databaseName.db");
 
   const result = await db.getAllAsync(
     `SELECT * FROM notes WHERE (date BETWEEN ? AND ?) AND month = ? AND year = ?`,
@@ -97,8 +101,7 @@ export const getNotesInDateRange = async (
   return result;
 };
 
-export const getMostRecentDate = async (): Promise<Note | undefined> => {
-  const db = await SQLite.openDatabaseAsync("databaseName.db");
+export const getMostRecentDate = async (db: SQLiteDatabase): Promise<Note | undefined> => {
 
   const result = await db.getFirstAsync<Note>(`
         SELECT * FROM notes 
@@ -113,8 +116,7 @@ interface CountResult {
   count: number;
 }
 
-export const getNotesCount = async (): Promise<number> => {
-  const db = await SQLite.openDatabaseAsync("databaseName.db");
+export const getNotesCount = async (db: SQLiteDatabase): Promise<number> => {
 
   const result = await db.getFirstAsync<CountResult>(
     "SELECT count(id) AS count FROM notes"
@@ -127,8 +129,7 @@ export const getNotesCount = async (): Promise<number> => {
   return result.count;
 };
 
-export const getDatesByMonth = async (month: number): Promise<number[]> => {
-  const db = await SQLite.openDatabaseAsync("databaseName.db");
+export const getDatesByMonth = async (db: SQLiteDatabase, month: number): Promise<number[]> => {
 
   const result = await db.getAllAsync("SELECT date FROM notes WHERE month=?", [
     month,
@@ -143,8 +144,6 @@ export const getDatesByMonth = async (month: number): Promise<number[]> => {
   return dates;
 };
 
-export const clearData = async () => {
-  const db = await SQLite.openDatabaseAsync("databaseName.db");
-
+export const clearData = async (db: SQLiteDatabase) => {
   await db.getFirstAsync("DELETE FROM notes");
 };

@@ -7,21 +7,25 @@ import Tile from "@/components/Tile";
 import Feather from "@expo/vector-icons/Feather";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Share } from "react-native";
 import { Alert } from "react-native";
 import { clearData } from "@/database/notesDb";
+import { useSQLiteContext } from "expo-sqlite";
+import * as SecureStore from 'expo-secure-store';
+
 
 const Profile = () => {
   const [name, setName] = useState<String>("");
+
+  const db = useSQLiteContext();
 
   useEffect(() => {
     getName();
   }, []);
 
-  const getName = async () => {
+  const getName = () => {
     try {
-      const nameItem = await AsyncStorage.getItem("userName");
+      const nameItem = SecureStore.getItem("userName");
       setName(nameItem ?? "Guest");
     } catch (error) {
       console.error("Error saving name:", error);
@@ -86,12 +90,12 @@ const Profile = () => {
             <Tile
               icon={<Feather name="user" size={24} color="black" />}
               title="Account Settings*"
-              onPress={() => {}}
+              onPress={() => { }}
             />
             <Tile
               icon={<Feather name="upload-cloud" size={24} color="black" />}
               title="Backup and Restore*"
-              onPress={() => {}}
+              onPress={() => { }}
             />
             <Tile
               icon={<Ionicons name="flash-outline" size={24} color="black" />}
@@ -115,19 +119,19 @@ const Profile = () => {
             <Tile
               icon={<Feather name="briefcase" size={24} color="black" />}
               title="Data Storage*"
-              onPress={() => {}}
+              onPress={() => { }}
             />
             <Tile
               icon={<Feather name="trash" size={24} color="black" />}
               title="Clear Data"
               onPress={async () => {
-                await clearData();
+                await clearData(db);
               }}
             />
             <Tile
               icon={<Feather name="key" size={24} color="black" />}
               title="Privacy Policy*"
-              onPress={() => {}}
+              onPress={() => { }}
             />
             <Tile
               icon={<Feather name="coffee" size={24} color="black" />}
@@ -150,7 +154,7 @@ const Profile = () => {
             <Tile
               icon={<MaterialIcons name="history" size={24} color="black" />}
               title="ChangeLog*"
-              onPress={() => {}}
+              onPress={() => { }}
             />
             <Tile
               icon={
@@ -161,7 +165,7 @@ const Profile = () => {
                 />
               }
               title="Version 1.0.0"
-              onPress={() => {}}
+              onPress={() => { }}
             />
           </View>
         </View>

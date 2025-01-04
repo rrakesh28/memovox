@@ -17,6 +17,7 @@ import {
   View,
 } from "react-native";
 import Feather from "@expo/vector-icons/Feather";
+import { useSQLiteContext } from "expo-sqlite";
 
 const Stats = () => {
   const [streak, setStreak] = useState<number>(0);
@@ -29,13 +30,15 @@ const Stats = () => {
     fetchDates();
   }, []);
 
+  const db = useSQLiteContext();
+
   const getCount = async () => {
-    const count = await getNotesCount();
+    const count = await getNotesCount(db);
     setJournals(count);
   };
 
   const checkStreak = () => {
-    getMostRecentDate()
+    getMostRecentDate(db)
       .then((recentDate) => {
         if (recentDate) {
           const isStreakContinued = calculateStreak(recentDate);
@@ -52,7 +55,7 @@ const Stats = () => {
   };
 
   const fetchDates = async () => {
-    const datesResult: number[] = await getDatesByMonth(new Date().getMonth());
+    const datesResult: number[] = await getDatesByMonth(db, new Date().getMonth());
     setDates(datesResult);
   };
 

@@ -14,6 +14,7 @@ import WeekButtonGrid from "@/components/WeekButtonGrid";
 import { Note } from "@/types/Note";
 import MonthButtonGrid from "@/components/MonthButtonGrid";
 import { fetchNotesByDate } from "@/database/notesDb";
+import { useSQLiteContext } from "expo-sqlite";
 
 const Calender = () => {
   const { year, month, day } = useMemo(() => {
@@ -39,13 +40,15 @@ const Calender = () => {
     setCurrentDay(date.day);
   }, []);
 
+  const db = useSQLiteContext();
+
   useEffect(() => {
     fetchNotes();
   }, [currentDay]);
 
   const fetchNotes = async () => {
     try {
-      const notes: Note[] = await fetchNotesByDate(currentDay, currentMonth - 1, currentYear)
+      const notes: Note[] = await fetchNotesByDate(db,currentDay, currentMonth - 1, currentYear)
       setNotes(notes);
     } catch (e) {
       console.error(e);

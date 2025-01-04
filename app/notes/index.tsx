@@ -9,16 +9,19 @@ import NoteCard from "@/components/NotesCard";
 import { Note } from "@/types/Note";
 import { fetchAllNotes } from "@/database";
 import { StatusBar } from "expo-status-bar";
+import { useSQLiteContext } from "expo-sqlite";
 
 const Home = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+
+  const db = useSQLiteContext();
 
   useEffect(() => {
     fetchNotes();
   }, []);
 
   const fetchNotes = async () => {
-    const notes: Note[] = await fetchAllNotes();
+    const notes: Note[] = await fetchAllNotes(db);
     setNotes(notes);
   };
   return (

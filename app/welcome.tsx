@@ -9,12 +9,12 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import React from "react";
 import { Link, router } from "expo-router";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import * as SecureStore from 'expo-secure-store';
 
 const Welcome = () => {
   const navigateUser = async () => {
-    await AsyncStorage.setItem("intro_completed", "true");
+    SecureStore.setItem("intro_completed", "true");
     router.replace("/user");
   };
 
