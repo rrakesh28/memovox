@@ -4,7 +4,7 @@
     "slug": "memovox",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,25 +13,25 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.gizmo.memovox"
+      "package": "com.techsip.memovox"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./logo.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./logo.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#D8D4C8"
         }
       ],
       "expo-sqlite"
@@ -44,7 +44,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "ac9a3c9f-8ca3-437a-93b6-af4ee207a9d2"
+        "projectId": "3d2c06d3-e1e7-4748-910e-8769df7ee651"
       }
     }
   }
